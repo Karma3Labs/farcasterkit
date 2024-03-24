@@ -16,10 +16,10 @@ export const createServer = () => {
   const app = express();
 
   app.disable("x-powered-by")
-     .use(morgan("dev"))
-     .use(urlencoded({ extended: true }))
-     .use(json())
-     .use(cors());
+    .use(morgan("dev"))
+    .use(urlencoded({ extended: true }))
+    .use(json())
+    .use(cors());
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.originalUrl === '/sw.js') {
@@ -38,10 +38,10 @@ export const createServer = () => {
     next();
   });
   app.use('/casts', CastsRouter)
-     .use('/channels', ChannelsRouter)
-     .use('/neynar', NeynarRouter)
-     .use('/users', UsersRouter)
-     .use('/openrank', OpenRank)
+    .use('/channels', ChannelsRouter)
+    .use('/neynar', NeynarRouter)
+    .use('/users', UsersRouter)
+    .use('/openrank', OpenRank)
   process.on('SIGINT', () => {
     posthog.flush();
     process.exit();
