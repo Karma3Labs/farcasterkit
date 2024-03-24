@@ -2,38 +2,84 @@ import {
   useGlobalRank,
   useUserGlobalRank,
   usePersonalizedNeighbors,
-  usePersonalizedNeighborsByAddresses,
   useHandlesByAddresses,
   useAddressesByHandles,
+  useDirectLinks,
+  QueryBy,
+  useFramesGlobal,
+  useFramesPersonalized,
 } from '../../../../packages/farcasterkit/index';
 
 const EXAMPLE_HANDLE = "dylsteck.eth";
 const EXAMPLE_ADDRESSES = ["0x8fc5d6afe572fefc4ec153587b63ce543f6fa2ea", "0x4114e33eb831858649ea3702e1c9a2db3f626446"];
 
 export default function DemoComponent() {
-  const { ranks, isLoading } = useGlobalRank({ strategy: "activity" });
-  const { rank, isLoading: isLoadingUserRank } = useUserGlobalRank({ strategy: 'activity', username: EXAMPLE_HANDLE });
-  const { neighbors, isLoading: isLoadingNeighbors } = usePersonalizedNeighbors({ handles: [EXAMPLE_HANDLE, "v"], withoutRankScore: false });
-  const { neighbors: neighborsFollowing, isLoading: isLoadingNeighborsFollowing } = usePersonalizedNeighbors({ handles: [EXAMPLE_HANDLE, "v"], withoutRankScore: false, strategy: 'following' });
-  const { neighbors: neighborsFollowingByAddress, isLoading: isLoadingNeighborsFollowingByAddress } = usePersonalizedNeighborsByAddresses({ addresses: EXAMPLE_ADDRESSES, withoutRankScore: false, strategy: 'following' });
+  const { accounts: globalAccounts, isLoading: isLoadingGlobal } = useGlobalRank({ strategy: "following", limit: 50 });
+  const { accounts: ranks, isLoading: isLoadingUserRank } = useUserGlobalRank({
+    strategy: 'following',
+    queryBy: QueryBy.Fids,
+    ids: [3, 4]
+  });
+  const { neighbors, isLoading: isLoadingNeighbors } = usePersonalizedNeighbors({
+    queryBy: QueryBy.Handles,
+    ids: [EXAMPLE_HANDLE, "v"],
+    withoutRankScore: false
+  });
+  const { neighbors: neighborsFollowing, isLoading: isLoadingNeighborsFollowing } = usePersonalizedNeighbors({
+    queryBy: QueryBy.Handles,
+    ids: [EXAMPLE_HANDLE, "v"],
+    withoutRankScore: false,
+    strategy: 'following'
+  });
+  const { neighbors: neighborsFollowingByAddress, isLoading: isLoadingNeighborsFollowingByAddress } = usePersonalizedNeighbors({
+    queryBy: QueryBy.Addresses,
+    ids: EXAMPLE_ADDRESSES,
+    withoutRankScore: false,
+    strategy: 'following'
+  });
+  const { neighbors: neighborsFollowingByFids, isLoading: isLoadingNeighborsFollowingByFids } = usePersonalizedNeighbors({
+    queryBy: QueryBy.Fids,
+    ids: [3, 5],
+    withoutRankScore: true,
+    strategy: 'engagement'
+  });
   const { accounts, isLoading: isLoadingGetHandles } = useHandlesByAddresses({ addresses: EXAMPLE_ADDRESSES });
   const { accounts: accountsByAddr, isLoading: isLoadingGetAddresses } = useAddressesByHandles({ handles: [EXAMPLE_HANDLE, "v"] });
+  const { accounts: directLinksByHandles, isLoading: isLoadingDirectLinksByHandles } = useDirectLinks({
+    // fids: [3, 4],
+    handles: [EXAMPLE_HANDLE],
+    strategy: 'engagement'
+  });
+  const { frames: framesGlobal, isLoading: isLoadingFramesGlobal } = useFramesGlobal({ details: true });
+  const { frames: framesPersonalized, isLoading: isLoadingFramePersonal } = useFramesPersonalized({
+    queryBy: QueryBy.Handles,
+    ids: ["sahil"],
+    offset: 1000,
+  });
+
+
 
   return (
     <main className="flex min-h-screen flex-col space-y-4 justify-between p-24">
       <div>
-        <span className='text-xl font-bold'>useUserGlobalRank for {EXAMPLE_HANDLE}</span>
+        <span className='text-xl font-bold'>useUserGlobalRank for fid (3,4)</span>
         {isLoadingUserRank && <div>loading...</div>}
-        {!isLoadingUserRank && <div>rank: {rank} </div>}
+        {ranks.map((a) => {
+          return (
+            <div key={a.fid} className='mb-4'>
+              <span>fid: {a.fid}, fname: {a.fname}, rank: {a.rank} percentile: {a.percentile}, score: {a.score}, username: {a.username}</span>
+            </div>
+          )
+        })}
       </div>
 
       <div>
         <span className='text-xl font-bold'>useGlobalRank</span>
-        {isLoading && <div>loading...</div>}
-        {ranks.map((a) => {
+        {isLoadingGlobal && <div>loading...</div>}
+        {globalAccounts.map((a) => {
           return (
-            <div key={a.id} className='mb-4'>
-              <span>rank: {a.rank}, username: {a.username}, value: {a.value} fid: {a.id}, followers: {a.followers}, following: {a.following}, likes: {a.likes}, replies: {a.replies}, recasts: {a.recasts}, mentions: {a.mentions}</span>
+            <div key={a.fid} className='mb-4'>
+              <span>fid: {a.fid}, fname: {a.fname}, rank: {a.rank} percentile: {a.percentile}, score: {a.score}, username: {a.username}</span>
             </div>
           )
         })}
@@ -73,6 +119,17 @@ export default function DemoComponent() {
         })}
       </div>
       <div>
+        <span className='text-xl font-bold'>usePersonalizedNeighbors - by fid (3, 4) - based on following</span>
+        {isLoadingNeighborsFollowingByFids && <div>loading...</div>}
+        {neighborsFollowingByFids.map((a) => {
+          return (
+            <div key={a.address} className='mb-4'>
+              <span>address: {a.address}, username: {a.username} fid: {a.fid} {a.score && `score: ${a.score}`}</span>
+            </div>
+          )
+        })}
+      </div>
+      <div>
         <span className='text-xl font-bold'>useHandlesByAddresses - for addresses (0x8fc5d6afe572fefc4ec153587b63ce543f6fa2ea, 0x4114e33eb831858649ea3702e1c9a2db3f626446)</span>
         {isLoadingGetHandles && <div>loading...</div>}
         {accounts.map((a) => {
@@ -90,6 +147,39 @@ export default function DemoComponent() {
           return (
             <div key={a.address} className='mb-4'>
               <span>address: {a.address}, fname: {a.fname}, username: {a.username}</span>
+            </div>
+          )
+        })}
+      </div>
+      <div>
+        <span className='text-xl font-bold'>useDirectLinks - for handles (dylsteck.eth, v)</span>
+        {isLoadingDirectLinksByHandles && <div>loading...</div>}
+        {directLinksByHandles.map((a) => {
+          return (
+            <div key={a.address} className='mb-4'>
+              <span>address: {a.address}, fname: {a.fname}, username: {a.username}, fid: {a.fid}, score: {a.score}</span>
+            </div>
+          )
+        })}
+      </div>
+      <div>
+        <span className='text-xl font-bold'>useFramesGlobal</span>
+        {isLoadingFramesGlobal && <div>loading...</div>}
+        {framesGlobal.map((a) => {
+          return (
+            <div key={a.url} className='mb-4'>
+              <span>url: {a.url}, score: {a.score}, cast_hashes: {a.cast_hashes}, warpcast_urls: {a.warpcast_urls} </span>
+            </div>
+          )
+        })}
+      </div>
+      <div>
+        <span className='text-xl font-bold'>useFramesPersonalized - fid (3,4)</span>
+        {isLoadingFramePersonal && <div>loading...</div>}
+        {framesPersonalized.map((a) => {
+          return (
+            <div key={a.url} className='mb-4'>
+              <span>url: {a.url}, score: {a.score}, interacted_by_fids: {a.interacted_by_fids}, interacted_by_fnames: {a.interacted_by_fnames}, interacted_by_usernames: {a.interacted_by_usernames} </span>
             </div>
           )
         })}

@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -19,7 +19,7 @@ importers:
         version: link:packages/tsconfig
       turbo:
         specifier: latest
-        version: 1.10.7
+        version: 1.12.5
 
   apps/api:
     dependencies:
@@ -279,6 +279,98 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
+  examples/openrank:
+    dependencies:
+      farcasterkit:
+        specifier: ^1.0.1
+        version: link:../../packages/farcasterkit
+      next:
+        specifier: 14.1.3
+        version: 14.1.3(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: ^18
+        version: 18.2.0
+      react-dom:
+        specifier: ^18
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.5.8
+      '@types/react':
+        specifier: ^18
+        version: 18.2.35
+      '@types/react-dom':
+        specifier: ^18
+        version: 18.2.14
+      autoprefixer:
+        specifier: ^10.0.1
+        version: 10.4.15(postcss@8.4.29)
+      eslint:
+        specifier: ^8
+        version: 8.48.0
+      eslint-config-next:
+        specifier: 14.1.3
+        version: 14.1.3(eslint@8.48.0)(typescript@5.3.3)
+      postcss:
+        specifier: ^8
+        version: 8.4.29
+      tailwindcss:
+        specifier: ^3.3.0
+        version: 3.3.3
+      typescript:
+        specifier: ^5
+        version: 5.3.3
+
+  examples/starter:
+    dependencies:
+      axios:
+        specifier: ^1.6.0
+        version: 1.6.5
+      farcasterkit:
+        specifier: ^1.0.1
+        version: link:../../packages/farcasterkit
+      next:
+        specifier: 14.0.1
+        version: 14.0.1(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: ^18
+        version: 18.2.0
+      react-dom:
+        specifier: ^18
+        version: 18.2.0(react@18.2.0)
+      swr:
+        specifier: ^2.2.4
+        version: 2.2.4(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.5.8
+      '@types/react':
+        specifier: ^18
+        version: 18.2.35
+      '@types/react-dom':
+        specifier: ^18
+        version: 18.2.14
+      autoprefixer:
+        specifier: ^10.0.1
+        version: 10.4.15(postcss@8.4.29)
+      eslint:
+        specifier: ^8
+        version: 8.48.0
+      eslint-config-next:
+        specifier: 14.0.1
+        version: 14.0.1(eslint@8.48.0)(typescript@5.3.3)
+      postcss:
+        specifier: ^8
+        version: 8.4.29
+      tailwindcss:
+        specifier: ^3.3.0
+        version: 3.3.3
+      typescript:
+        specifier: ^5
+        version: 5.3.3
+
   packages/components:
     dependencies:
       next:
@@ -415,9 +507,6 @@ importers:
 
   packages/farcasterkit-react-native:
     dependencies:
-      '@neynar/nodejs-sdk':
-        specifier: ^1.5.0
-        version: 1.5.0(typescript@5.3.3)
       '@react-native-async-storage/async-storage':
         specifier: ^1.21.0
         version: 1.21.0(react-native@0.73.2)
@@ -427,9 +516,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.14
         version: 18.2.14
-      axios:
-        specifier: ^1.6.5
-        version: 1.6.5
       react:
         specifier: ^18.2.0
         version: 18.2.0
