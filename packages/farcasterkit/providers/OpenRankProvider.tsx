@@ -309,7 +309,7 @@ type HandlesByAddressesParams = {
   addresses: string[]
 };
 
-export const useHandlesByAddresses = (queryParams?: HandlesByAddressesParams) => {
+export const useAccountsByAddresses = (queryParams?: HandlesByAddressesParams) => {
   const context = useContext(OpenRankContext);
 
   if (context === undefined) {
@@ -363,7 +363,7 @@ type AddressesByHandlesParams = {
   handles: string[]
 };
 
-export const useAddressesByHandles = (queryParams?: AddressesByHandlesParams) => {
+export const useAccountsByHandles = (queryParams?: AddressesByHandlesParams) => {
   const context = useContext(OpenRankContext);
 
   if (context === undefined) {
@@ -413,6 +413,59 @@ export const useAddressesByHandles = (queryParams?: AddressesByHandlesParams) =>
   return { accounts: neighbors, isLoading };
 };
 
+type ParamsAccountsByFids = {
+  fids: number[]
+};
+
+export const useAccountsByFids = (queryParams?: ParamsAccountsByFids) => {
+  const context = useContext(OpenRankContext);
+
+  if (context === undefined) {
+    throw new Error('useAccountByFids must be used within a OpenRankProvider');
+  }
+
+  if (!queryParams?.fids || queryParams.fids && queryParams.fids.length == 0) {
+    throw new Error('fids must be set');
+  }
+
+  const { baseURL } = context;
+  const [neighbors, setNeighbors] = useState<Neighbor[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      if (isMounted) setIsLoading(true);
+
+      const url = `${baseURL}/openrank/metadata/addresses/fids`;
+
+      try {
+        const response = await axios.post(url, queryParams.fids);
+        const responseData = response.data as PersonalizedNeighborResponse;
+        if (isMounted) {
+          setNeighbors(responseData.result || []);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching latest casts:', error);
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData().catch((err) => {
+      console.log('error', err);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [baseURL, JSON.stringify(queryParams)]);
+
+  return { accounts: neighbors, isLoading };
+};
 
 type UseDirectLinksParams = {
   strategy?: 'following' | 'engagement',

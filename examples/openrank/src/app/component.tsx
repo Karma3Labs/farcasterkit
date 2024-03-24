@@ -2,12 +2,13 @@ import {
   useGlobalRank,
   useUserGlobalRank,
   usePersonalizedNeighbors,
-  useHandlesByAddresses,
-  useAddressesByHandles,
+  useAccountsByAddresses,
+  useAccountsByHandles,
   useDirectLinks,
   QueryBy,
   useFramesGlobal,
   useFramesPersonalized,
+  useAccountsByFids,
 } from '../../../../packages/farcasterkit/index';
 
 const EXAMPLE_HANDLE = "dylsteck.eth";
@@ -43,8 +44,11 @@ export default function DemoComponent() {
     withoutRankScore: true,
     strategy: 'engagement'
   });
-  const { accounts, isLoading: isLoadingGetHandles } = useHandlesByAddresses({ addresses: EXAMPLE_ADDRESSES });
-  const { accounts: accountsByAddr, isLoading: isLoadingGetAddresses } = useAddressesByHandles({ handles: [EXAMPLE_HANDLE, "v"] });
+  const { accounts, isLoading: isLoadingGetHandles } = useAccountsByAddresses({ addresses: EXAMPLE_ADDRESSES });
+  const { accounts: accountsByAddr, isLoading: isLoadingGetAddresses } = useAccountsByHandles({ handles: [EXAMPLE_HANDLE, "v"] });
+  const { accounts: fidsByAddrs, isLoading: isLoadingfidsByAddrs } = useAccountsByFids({ fids: [3, 4] });
+
+
   const { accounts: directLinksByHandles, isLoading: isLoadingDirectLinksByHandles } = useDirectLinks({
     // fids: [3, 4],
     handles: [EXAMPLE_HANDLE],
@@ -130,23 +134,34 @@ export default function DemoComponent() {
         })}
       </div>
       <div>
-        <span className='text-xl font-bold'>useHandlesByAddresses - for addresses (0x8fc5d6afe572fefc4ec153587b63ce543f6fa2ea, 0x4114e33eb831858649ea3702e1c9a2db3f626446)</span>
+        <span className='text-xl font-bold'>useAccountsByAddresses - for addresses (0x8fc5d6afe572fefc4ec153587b63ce543f6fa2ea, 0x4114e33eb831858649ea3702e1c9a2db3f626446)</span>
         {isLoadingGetHandles && <div>loading...</div>}
         {accounts.map((a) => {
           return (
             <div key={a.address} className='mb-4'>
-              <span>address: {a.address}, fname: {a.fname}, username: {a.username}</span>
+              <span>fid: {a.fid}, address: {a.address}, fname: {a.fname}, username: {a.username}</span>
             </div>
           )
         })}
       </div>
       <div>
-        <span className='text-xl font-bold'>useAddressesByHandles - for addresses (dylsteck.eth, v)</span>
+        <span className='text-xl font-bold'>useAccountsByHandles - for addresses (dylsteck.eth, v)</span>
         {isLoadingGetAddresses && <div>loading...</div>}
         {accountsByAddr.map((a) => {
           return (
             <div key={a.address} className='mb-4'>
-              <span>address: {a.address}, fname: {a.fname}, username: {a.username}</span>
+              <span>fid: {a.fid}, address: {a.address}, fname: {a.fname}, username: {a.username}</span>
+            </div>
+          )
+        })}
+      </div>
+      <div>
+        <span className='text-xl font-bold'>useAccountsByFids - for addresses (3, 4)</span>
+        {isLoadingfidsByAddrs && <div>loading...</div>}
+        {fidsByAddrs.map((a) => {
+          return (
+            <div key={a.address} className='mb-4'>
+              <span>fid: {a.fid}, address: {a.address}, fname: {a.fname}, username: {a.username}</span>
             </div>
           )
         })}
